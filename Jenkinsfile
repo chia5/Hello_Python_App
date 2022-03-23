@@ -1,5 +1,5 @@
-pipeline {
-    agent{label 'prod'}
+node('Ubuntu'){
+    
     def app
 
     stage('Clone repository') {
