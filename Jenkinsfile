@@ -1,4 +1,5 @@
-node { label 'prod' } {
+pipeline {
+    agent{label 'prod'}
     def app
 
     stage('Clone repository') {
