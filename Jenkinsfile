@@ -1,4 +1,4 @@
-agent { node { label 'prod' } }
+agent { node { label 'prod' } } {
     def app
 
     stage('Clone repository') {
