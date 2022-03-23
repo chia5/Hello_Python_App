@@ -9,7 +9,9 @@ pipeline{
         
         stage('Build'){
             steps{
-                app = docker.build('chash07/helloapp')
+                script{
+                    app = docker.build('chash07/helloapp')
+                }
             }
         }
         
@@ -22,8 +24,10 @@ pipeline{
         
         stage('Push Image'){
             steps{
-                docker.withRegistry('https://registry.hub.docker.com', 'dockerhub'){
-                    app.push('${env.BUILD_NUMBER}')
+                script{
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub'){
+                        app.push('${env.BUILD_NUMBER}')
+                    }
                 }
             }
         }
