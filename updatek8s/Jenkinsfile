@@ -1,5 +1,5 @@
 pipeline{
-    agent{lable 'prod'}
+    agent{label 'prod'}
     stage('Clone repository') {
         
         git branch: 'main', url: 'https://github.com/chia5/Hello_Python_App.git'
