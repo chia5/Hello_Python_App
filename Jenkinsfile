@@ -1,42 +1,34 @@
-pipeline{
-    agent{label 'prod'}
-    stages{
-        stage('Checkout'){
-            steps{
-                git branch: 'main', url: 'https://github.com/chia5/Hello_Python_App.git'
-            }
-        }
-        
-        stage('Build'){
-            steps{
-                script{
-                    app = docker.build('chash07/helloapp:${env.BUILD_NUMBER}')
-                }
-            }
-        }
-        
-        stage('Test Image'){
-            steps{
-                echo "Test Successfull"
-        
-            }        
-        }
-        
-        stage('Push Image'){
-            steps{
-                script{
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub'){
-                        app.push()
-                    }
-                }
-            }
-        }
-        
-        stage('Trigger ManifestUpdate'){
-            steps{
-                echo "triggering updatemanifestjob"
-                build job: 'updatemanifest', parameters: [string(name: 'DOCKERTAG', value: env.BUILD_NUMBER)]
-            }
+agent { node { label 'prod' } }
+    def app
+
+    stage('Clone repository') {
+      
+
+        checkout scm
+    }
+
+    stage('Build image') {
+  
+       app = docker.build("chash07/helloapp")
+    }
+
+    stage('Test image') {
+  
+
+        app.inside {
+            sh 'echo "Tests passed"'
         }
     }
+
+    stage('Push image') {
+        
+        docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
+            app.push("${env.BUILD_NUMBER}")
+        }
+    }
+    
+    stage('Trigger ManifestUpdate') {
+                echo "triggering updatemanifestjob"
+                build job: 'updatemanifest', parameters: [string(name: 'DOCKERTAG', value: env.BUILD_NUMBER)]
+        }
 }
